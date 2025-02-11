@@ -15,9 +15,11 @@ export const getIssues = async (payload, requestContext) => {
   const jql = label ? `project=${projectKey} AND labels=${label}` : `project=${projectKey}`;
   const response = await api.asApp().requestJira(route`/rest/api/3/search?jql=${jql}`);
   const data = await response.json();
+
+  const filteredData = data.filter((issue) => issue.fields.issuetype.name != "Epic")
   
   // Issue Data: Start time, end time, storypoint estimation, team id
-  const cleanedIssueData = await extractIssueDetails(data);
+  const cleanedIssueData = await extractIssueDetails(filteredData);
 
   // All User Ids and Names
   const cleanedUserData = getAllUsers(cleanedIssueData);
