@@ -1,6 +1,9 @@
 import api, { ExternalEndpointNotAllowedError, route } from '@forge/api';
 
-// Fetch issues from jira in a specific project
+/**
+ * @see THIS FUNCTION IS TO BE CALLED BY ROVO TO GET THE ISSUE DATA
+ * 
+ */
 export const getIssues = async (payload, requestContext) => {
   // console.log(`Payload: ${JSON.stringify(payload)}`);
   // console.log(`Request Context: ${JSON.stringify(requestContext)}`);
@@ -32,6 +35,61 @@ export const getIssues = async (payload, requestContext) => {
 
   return cleanedIssueAndUserData;
 }
+
+/**
+ * @see THIS FUNCTION IS TO BE CALLED BY ROVO TO UPDATE THE ACTUAL ISSUES
+ * 
+ */
+export const reassignIssues = async (payload, requestContext) => {
+  for (const issue of payload.issues) {
+    await editIssue(issue);
+    await assignIssue(issue);
+  }
+};
+
+// Function to edit issue details (startTime and endTime)
+export const editIssue = async (issue) => {
+  const bodyData = JSON.stringify({
+    fields: {
+      customfield_10015: issue.startTime,
+      duedate: issue.endTime 
+    }
+  });
+
+  const response = await api.asUser().requestJira(route`/rest/api/3/issue/${issue.id}`, {
+    method: 'PUT',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: bodyData
+  });
+
+  console.log(`Edit Issue Response: ${response.status} ${response.statusText}`);
+  console.log(await response.json());
+};
+
+// Function to assign an issue to a user
+export const assignIssue = async (issue) => {
+  const bodyData = JSON.stringify({
+    accountId: issue.assigneeId
+  });
+
+  const response = await api.asUser().requestJira(route`/rest/api/3/issue/${issue.id}/assignee`, {
+    method: 'PUT',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: bodyData
+  });
+
+  console.log(`Assign Issue Response: ${response.status} ${response.statusText}`);
+  console.log(await response.json());
+};
+
+
+
 
 export const getValidTeamId = async (issues) => {
   var creatorId = ""
