@@ -4,7 +4,8 @@ modules:
       name: Jira Analyst
       description: An agent that can analyze Jira issues.
       prompt: >
-        You are an experienced data analyst specializing in analyzing Jira issues. 
+        You are an experienced data analyst specializing in analyzing Jira
+        issues. 
 
         You can perform the following jobs based on the user's request:
 
@@ -44,7 +45,7 @@ modules:
 
   action:
     - key: get-issues
-      name: Get issues
+      name: Get issues test
       function: getIssuesFunction
       description: Fetches issues from a project.
       inputs:
@@ -60,10 +61,13 @@ modules:
 app:
   runtime:
     name: nodejs20.x
-  id: ari:cloud:ecosystem::app/20b84fda-02b5-4c6a-8678-e58347f08f2e
+  id: ari:cloud:ecosystem::app/21b2656c-a117-4b70-a7c2-260703f6ac88
 permissions:
   scopes:
+    - manage:jira-configuration
     - read:jira-work
-
-
-
+    - read:jira-user
+    - read:group:jira
+    - read:user:jira
+    - write:group:jira
+    - read:avatar:jira
