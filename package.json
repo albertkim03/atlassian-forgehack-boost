@@ -4,5 +4,8 @@
   "description": "a sample forge app with rovo-agent module",
   "main": "index.js",
   "private": true,
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@forge/api": "^4.3.0"
+  }
 }
